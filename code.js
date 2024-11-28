@@ -4,6 +4,8 @@ const topDisplay = document.querySelector('.display-top')
 const btmDisplay = document.querySelector('.display-bottom')
 const numBtns = document.querySelectorAll('button.num');
 
+const NUM_OF_DP = 2;
+
 
 
 // function test(num1,op){
@@ -35,9 +37,26 @@ function splitEquation(text){
   return ['','','']
 }
 
+function checkValidInput(input){
+  const bText = btmDisplay.textContent + input;
+  let count = 0;
+  for (let i = 0; i < bText.length; i++){
+    if (bText[i] === '.') count++;
+    if (isNaN(bText[i]) && bText[i]!=='.') count = 0;
+  }
+  console.log(count);
+  return count <= 1;
+}
+
 function updateDisplays(input){
   const [a,op,b] = splitEquation(btmDisplay.textContent);
   const previousInput = btmDisplay.textContent[btmDisplay.textContent.length-1];
+
+  if ((input === '.' && previousInput === '.') || !checkValidInput(input)) return;
+  if ((previousInput === '.' && isNaN(input)) || (isNaN(previousInput) && input === '.')  ) {
+    updateBtmDisplay(input,btmDisplay.textContent + '0');
+    return;
+  }
 
   if (isNaN(input) && previousInput === input && input !== '.') {
     let result = '';
@@ -96,7 +115,6 @@ function updateBtmDisplay(input, result = ''){
 
   if (result !== '') {
     btmDisplay.textContent = result;
-    console.log(input);
     if (input !== '=') btmDisplay.textContent += input;
     return;
   } 
@@ -148,5 +166,7 @@ function calculate(a,b,op){
     '%': (a,b) => a%b,
   }
 
-  return operations[op](+a,+b);
+  const result = operations[op](+a,+b);
+  if (Math.ceil(result) === result) return result;
+  return result.toFixed(NUM_OF_DP);
 }
