@@ -24,20 +24,20 @@ h2 {
   border-radius: 4px;
   background-color: #dfe1e0;
   color: #2a3337;
-  font-size: 22px;
+  font-size: 20px;
   margin-bottom: 10px;
   text-align: center;
-  
+  padding: 5px;
 }
 
 .calc-header-1 {
   color: #569bb6;
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .calc-header-2 {
   color: #a5a9a8;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .display {
@@ -50,12 +50,13 @@ h2 {
 .display-top {
   font-size: 14px;
   padding: 0 10px;
+  height: 20px;
 }
 
 .display-bottom {
   font-size: 25px;
   padding: 0 10px;
-
+  height: 30px;
 }
 
 .button-container {
@@ -73,13 +74,13 @@ button {
   border: none;
   border-radius: 8px;
   height: 32px;
-  width: 80px;
+  width: 64px;
   font-size: 20px;
   font-weight: bold;
   background-color: #c5b292;
   color: #3f453f;
-  box-shadow: black 0px 2px 2px;
-}
+  box-shadow: #c5b2925e 0px 2px 2px;
+} 
 
 button:active {
   opacity: 0.8;
