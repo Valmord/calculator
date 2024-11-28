@@ -28,15 +28,33 @@ numBtns.forEach( btn => {
 
 function splitEquation(text){
   for (let i = 1; i < text.length; i++){
-    if (isNaN(text[i])) {
+    if (isNaN(text[i]) && text[i] !== '.') {
       return [text.slice(0,i),text[i],text.slice(i+1)];
     }
   }
+  return ['','','']
 }
 
 function updateDisplays(input){
-  if (input === '=') {
-    const [a,op,b] = splitEquation(btmDisplay.textContent);
+  const [a,op,b] = splitEquation(btmDisplay.textContent);
+  const previousInput = btmDisplay.textContent[btmDisplay.textContent.length-1];
+
+  if (isNaN(input) && previousInput === input && input !== '.') {
+    if (topDisplay.textContent) {
+      const [,,newA] = splitEquation(topDisplay.textContent);
+      updateTopDisplay(newA.slice(0,-1));
+    } else {
+      
+      updateTopDisplay(a);
+    }
+    const result = calculate(a,a,op);
+    updateBtmDisplay(input, result);
+
+    return;
+  }
+
+  if (input === '=' || (op && isNaN(input) && input !== '.')) {
+    // const [a,op,b] = splitEquation(btmDisplay.textContent);
     const result = calculate(a,b,op);
     updateTopDisplay();
     updateBtmDisplay(input, result);
@@ -46,7 +64,6 @@ function updateDisplays(input){
 
 
 
-  const previousInput = btmDisplay.textContent[btmDisplay.textContent.length-1];
   if (isNaN(previousInput) && isNaN(input) && input !== '.'){
     // updateTopDisplay();
     // updateBtmDisplay(input, true);
@@ -63,10 +80,14 @@ function doesCurrentOpExist(op){
   } return true;
 }
 
-function updateTopDisplay(){
+function updateTopDisplay(firstOperand = ''){
   const td = topDisplay.textContent;
   if (td[td.length-1] === '-') topDisplay.textContent = td.slice(0,-1);
-  topDisplay.textContent = btmDisplay.textContent + '=';
+  if (firstOperand) {
+    topDisplay.textContent = btmDisplay.textContent + firstOperand + '=';
+  } else {
+    topDisplay.textContent = btmDisplay.textContent + '=';
+  }
 }
 
 function updateBtmDisplay(input, result = ''){
