@@ -55,6 +55,10 @@ function updateDisplays(input){
   const [a,op,b] = splitEquation(bText);
   const previousInput = bText[bTextLen-1];
 
+  if (input === '=' && !op) {
+    updateTopDisplay();
+    return;
+  }
   if (input === '←') {
     if (bTextLen === 1) updateBtmDisplay("",'0');
     else updateBtmDisplay("",bText.slice(0,-1));
@@ -154,6 +158,21 @@ opBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       updateDisplays(btn.textContent);
     })
+  }
+})
+
+document.addEventListener('keydown', event => {
+  console.log(event.key);
+  if (event.key === 'Backspace') {
+    updateDisplays('←');
+  } else if (event.key === 'Enter') {
+    updateDisplays('=');
+  } else if (event.key === '*') {
+    updateDisplays('×');
+  } else if (event.key === '/') {
+    updateDisplays('÷');
+  } else if ('1234567890.+_-=*^%/'.includes(event.key)) {
+    updateDisplays(event.key);
   }
 })
 
