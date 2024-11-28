@@ -164,6 +164,7 @@ function calculate(a,b,op){
     '×': (a,b) => a*b,
     '÷': (a,b) => a/b,
     '%': (a,b) => a%b,
+    '^': (a,b) => a**b,
   }
 
   const result = operations[op](+a,+b);
