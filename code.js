@@ -94,7 +94,7 @@ function updateTopDisplay(firstOperand = ''){
 
 function updateBtmDisplay(input, result = ''){
 
-  if (result) {
+  if (result !== '') {
     btmDisplay.textContent = result;
     console.log(input);
     if (input !== '=') btmDisplay.textContent += input;
@@ -121,9 +121,14 @@ clearBtn.addEventListener('click', () => {
 
 const opBtns = document.querySelectorAll('.op');
 opBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    updateDisplays(btn.textContent);
-  })
+  if (btn.textContent.includes('mod')){
+    btn.addEventListener('click', () => {
+      updateDisplays('%');
+  })} else {
+    btn.addEventListener('click', () => {
+      updateDisplays(btn.textContent);
+    })
+  }
 })
 
 const equalBtn = document.querySelector('.equals');
@@ -140,6 +145,7 @@ function calculate(a,b,op){
     '-': (a,b) => a-b,
     '×': (a,b) => a*b,
     '÷': (a,b) => a/b,
+    '%': (a,b) => a%b,
   }
 
   return operations[op](+a,+b);
