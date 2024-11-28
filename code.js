@@ -40,14 +40,16 @@ function updateDisplays(input){
   const previousInput = btmDisplay.textContent[btmDisplay.textContent.length-1];
 
   if (isNaN(input) && previousInput === input && input !== '.') {
+    let result = '';
     if (topDisplay.textContent) {
-      const [,,newA] = splitEquation(topDisplay.textContent);
-      updateTopDisplay(newA.slice(0,-1));
+      let [,,newA] = splitEquation(topDisplay.textContent);
+      newA = newA.slice(0,-1);
+      updateTopDisplay(newA);
+      result = calculate(a,newA,op);
     } else {
-      
+      result = calculate(a,a,op);
       updateTopDisplay(a);
     }
-    const result = calculate(a,a,op);
     updateBtmDisplay(input, result);
 
     return;
@@ -112,7 +114,7 @@ function updateBtmDisplay(input, result = ''){
 
 
 clearBtn.addEventListener('click', () => {
-  topDisplay.textContent = ' ';
+  topDisplay.textContent = '';
   btmDisplay.textContent = 0;
   currentOp = '';
 })
