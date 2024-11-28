@@ -1,8 +1,9 @@
-let currentOp = '';
 const clearBtn = document.querySelector('.clear');
 const topDisplay = document.querySelector('.display-top')
 const btmDisplay = document.querySelector('.display-bottom')
 const numBtns = document.querySelectorAll('button.num');
+const opBtns = document.querySelectorAll('.op');
+
 
 const NUM_OF_DP = 2;
 
@@ -49,12 +50,19 @@ function checkValidInput(input){
 }
 
 function updateDisplays(input){
-  const [a,op,b] = splitEquation(btmDisplay.textContent);
-  const previousInput = btmDisplay.textContent[btmDisplay.textContent.length-1];
+  const bText = btmDisplay.textContent;
+  const bTextLen = bText.length;
+  const [a,op,b] = splitEquation(bText);
+  const previousInput = bText[bTextLen-1];
 
+  if (input === '←') {
+    if (bTextLen === 1) updateBtmDisplay("",'0');
+    else updateBtmDisplay("",bText.slice(0,-1));
+    return;
+  }
   if ((input === '.' && previousInput === '.') || !checkValidInput(input)) return;
   if ((previousInput === '.' && isNaN(input)) || (isNaN(previousInput) && input === '.')  ) {
-    updateBtmDisplay(input,btmDisplay.textContent + '0');
+    updateBtmDisplay(input,bText + '0');
     return;
   }
 
@@ -137,7 +145,7 @@ clearBtn.addEventListener('click', () => {
   currentOp = '';
 })
 
-const opBtns = document.querySelectorAll('.op');
+
 opBtns.forEach(btn => {
   if (btn.textContent.includes('mod')){
     btn.addEventListener('click', () => {
@@ -148,13 +156,6 @@ opBtns.forEach(btn => {
     })
   }
 })
-
-const equalBtn = document.querySelector('.equals');
-equalBtn.addEventListener('click', () => {
-  updateDisplays('=');
-})
-
-
 
 
 function calculate(a,b,op){
