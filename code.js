@@ -59,12 +59,17 @@ function updateDisplays(input){
     if (bTextLen > 23 || bText.includes('.')) return;
     updateBottomDisplay('.');
   } else {
-
+    // Deal with Operators
     if (input === '=') {
       if (lastTDChar === '=') return;
         const [firstOperand,operator] = [tText.slice(0,-1),tText[tText.length-1]]; 
         updateTopDisplay('', tText + bText + input);
         updateBottomDisplay('',calculate(firstOperand,operator,bText));
+    } else if (input === '←') {
+      updateBottomDisplay('',bTextLen <= 1 ? '0' : bText.slice(0,-1));
+      clearTopDisplay();
+      top
+      return;
     } else if (lastTDChar && isNaN(lastTDChar))  {
       if (lastTDChar === '=') {
         updateTopDisplay('', calculate(...splitEquation(tText.slice(0,-1)))+input);
@@ -160,7 +165,10 @@ function updateBottomDisplay(input, newText=''){
 function clearDisplays(){
   topDisplay.textContent = '';
   btmDisplay.textContent = 0;
-  btmDisplay.classList.remove('display-previous');
+}
+
+function clearTopDisplay(){
+  topDisplay.textContent = '';
 }
 
 clearBtn.addEventListener('click', () => {
