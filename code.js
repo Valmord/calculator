@@ -41,21 +41,47 @@ function updateDisplays(input){
   const tText = topDisplay.textContent;
   const lastTDChar = tText[tText.length-1];
 
+  btmDisplay.classList.remove('fade');
 
-  // bTextLen < 22
+  
+
+
   if (!isNaN(input)) {
-    
-    // if (isNaN(lastTDChar) )
     if (lastTDChar === '=') {
       clearDisplays();
-    } else if (isNaN(lastInput)) updateBottomDisplay('','0');
+    } else if (isNaN(lastInput) && lastInput !== '.') updateBottomDisplay('','0');
     lastInput = input;
     if (bTextLen > 23) return;
     updateBottomDisplay(input);
-    return; 
+    return;
   }
+  if (input === '.') {
+    if (bTextLen > 23 || bText.includes('.')) return;
+    updateBottomDisplay('.');
+  } else {
 
+    if (input === '=') {
+      if (lastTDChar === '=') return;
+        const [firstOperand,operator] = [tText.slice(0,-1),tText[tText.length-1]]; 
+        updateTopDisplay('', tText + bText + input);
+        updateBottomDisplay('',calculate(firstOperand,operator,bText));
+    } else if (lastTDChar && isNaN(lastTDChar))  {
+      if (lastTDChar === '=') {
+        updateTopDisplay('', calculate(...splitEquation(tText.slice(0,-1)))+input);
+      } else {
+        const [firstOperand,operator] = [tText.slice(0,-1),tText[tText.length-1]]; 
+        updateTopDisplay('', calculate(firstOperand,operator,bText) + input );
+      }
+    } else {
+      updateTopDisplay(input, bText);
+    }
+  }
   lastInput = input;
+  btmDisplay.classList.add('fade');
+  return;
+
+
+
 
   if (input === '←') {
     if (btmDisplay.classList.contains('display-previous') || bTextLen <= 1) updateBottomDisplay('','0');
@@ -79,9 +105,6 @@ function updateDisplays(input){
       updateTopDisplay(input, bText);
       btmDisplay.classList.add('display-previous');
     } else if (input === '=') {
-      const [firstOperand,operator] = [tText.slice(0,-1),tText[tText.length-1]]; 
-      updateTopDisplay('', tText + bText + input);
-      updateBottomDisplay('',calculate(firstOperand,bText,operator));
       btmDisplay.classList.add('display-result');
     }
     else {
@@ -110,12 +133,7 @@ function updateBottomDisplay(input, newText=''){
     btmDisplay.textContent = newText;
     return;
   }
-  if (btmDisplay.classList.contains('display-previous')) {
-    btmDisplay.textContent = input;
-    btmDisplay.classList.remove('display-previous');
-    return;
-  }
-  if (btmDisplay.textContent === '0') btmDisplay.textContent = '';
+  if (btmDisplay.textContent === '0' && !isNaN(input)) btmDisplay.textContent = '';
   btmDisplay.textContent += input;
 }
 
@@ -179,7 +197,7 @@ document.addEventListener('keydown', event => {
 })
 
 
-function calculate(a,b,op){
+function calculate(a,op,b){
   const operations = {
     '+': (a,b) => a+b,
     '-': (a,b) => a-b,
