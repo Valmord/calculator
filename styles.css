@@ -51,6 +51,7 @@ h2 {
   font-size: 14px;
   padding: 0 10px;
   height: 20px;
+  opacity: 0.85;
 }
 
 .display-bottom {
@@ -58,6 +59,17 @@ h2 {
   padding: 0 10px;
   height: 30px;
 }
+
+.display-previous {
+  opacity: 0.7;
+}
+
+
+.display-result {
+  text-decoration: double;
+}
+
+
 
 .button-container {
   padding: 0 10px 10px 10px;

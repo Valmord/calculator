@@ -4,22 +4,7 @@ const btmDisplay = document.querySelector('.display-bottom')
 const numBtns = document.querySelectorAll('button.num');
 const opBtns = document.querySelectorAll('.op');
 
-
 const NUM_OF_DP = 2;
-
-
-
-// function test(num1,op){
-//   this.op = op;
-//   this.num1 = num;
-//   return function(num2){
-//     return calculate(this.num1,this.op,num);
-//   }
-// }
-
-
-
-// console.log(calculate(5,'+','7'));  
 
 
 numBtns.forEach( btn => {
@@ -45,108 +30,113 @@ function checkValidInput(input){
     if (bText[i] === '.') count++;
     if (isNaN(bText[i]) && bText[i]!=='.') count = 0;
   }
-  console.log(count);
   return count <= 1;
 }
 
 function updateDisplays(input){
   const bText = btmDisplay.textContent;
-  const bTextLen = bText.length;
-  const [a,op,b] = splitEquation(bText);
-  const previousInput = bText[bTextLen-1];
+  const bTextLen = bText.length;  
+  const tText = topDisplay.textContent;
 
-  if (input === '=' && !op) {
-    updateTopDisplay();
-    return;
+  if (bTextLen > 23 && !isNaN(input) && !btmDisplay.classList.contains('display-previous')) return;
+  if (!isNaN(input)) {
+    if (tText[tText.length-1] === '=') {
+      clearDisplays();
+    } 
+    updateBottomDisplay(input);
+    return; 
   }
+
   if (input === '←') {
-    if (bTextLen === 1) updateBtmDisplay("",'0');
-    else updateBtmDisplay("",bText.slice(0,-1));
-    return;
-  }
-  if ((input === '.' && previousInput === '.') || !checkValidInput(input)) return;
-  if ((previousInput === '.' && isNaN(input)) || (isNaN(previousInput) && input === '.')  ) {
-    updateBtmDisplay(input,bText + '0');
+    if (btmDisplay.classList.contains('display-previous') || bTextLen <= 1) updateBottomDisplay('','0');
+    else updateBottomDisplay('',bText.slice(0,-1));
+    btmDisplay.classList.remove('display-previous');
+    btmDisplay.classList.remove('display-result');
     return;
   }
 
-  if (isNaN(input) && previousInput === input && input !== '.') {
-    let result = '';
-    if (topDisplay.textContent) {
-      let [,,newA] = splitEquation(topDisplay.textContent);
-      newA = newA.slice(0,-1);
-      updateTopDisplay(newA);
-      result = calculate(a,newA,op);
-    } else {
-      result = calculate(a,a,op);
-      updateTopDisplay(a);
+  if (input !== '.' && isNaN(input)){
+    if (tText[tText.length-1] === '=') {
+      updateTopDisplay(input, bText);
+      btmDisplay.classList.add('display-previous');
     }
-    updateBtmDisplay(input, result);
+  }
 
+
+
+  if (input !== '.' && isNaN(input)){
+    if (!tText) {
+      updateTopDisplay(input, bText);
+      btmDisplay.classList.add('display-previous');
+    } else if (input === '=') {
+      const [firstOperand,operator] = [tText.slice(0,-1),tText[tText.length-1]]; 
+      updateTopDisplay('', tText + bText + input);
+      updateBottomDisplay('',calculate(firstOperand,bText,operator));
+      btmDisplay.classList.add('display-result');
+    }
+    else {
+      const [firstOperand,operator] = [tText.slice(0,-1),tText[tText.length-1]];
+      updateTopDisplay('',calculate(firstOperand,bText,operator) + input);
+      // updateBottomDisplay('',calculate(firstOperand,bText,operator));
+    }
     return;
   }
 
-  if (input === '=' || (op && isNaN(input) && input !== '.')) {
-    // const [a,op,b] = splitEquation(btmDisplay.textContent);
-    const result = calculate(a,b,op);
-    updateTopDisplay();
-    updateBtmDisplay(input, result);
+  if (btmDisplay.classList.contains('display-result')) {
+    clearDisplays();
+    btmDisplay.classList.remove('display-result');
+  }
+
+  updateBottomDisplay(input); 
+}
+
+function updateTopDisplay(input, newText = ''){
+  if (newText) topDisplay.textContent = newText + input;
+  else topDisplay.textContent += input;
+}
+
+function updateBottomDisplay(input, newText=''){
+  if (newText) {
+    btmDisplay.textContent = newText;
     return;
   }
-
-
-
-
-  if (isNaN(previousInput) && isNaN(input) && input !== '.'){
-    // updateTopDisplay();
-    // updateBtmDisplay(input, true);
-  } else {
-    updateBtmDisplay(input);
-  }
-    
-}
-
-function doesCurrentOpExist(op){
-  if (!currentOp) { 
-    currentOp = op;
-    return false;
-  } return true;
-}
-
-function updateTopDisplay(firstOperand = ''){
-  const td = topDisplay.textContent;
-  if (td[td.length-1] === '-') topDisplay.textContent = td.slice(0,-1);
-  if (firstOperand) {
-    topDisplay.textContent = btmDisplay.textContent + firstOperand + '=';
-  } else {
-    topDisplay.textContent = btmDisplay.textContent + '=';
-  }
-}
-
-function updateBtmDisplay(input, result = ''){
-
-  if (result !== '') {
-    btmDisplay.textContent = result;
-    if (input !== '=') btmDisplay.textContent += input;
+  if (btmDisplay.classList.contains('display-previous')) {
+    btmDisplay.textContent = input;
+    btmDisplay.classList.remove('display-previous');
     return;
-  } 
-
-  const dsp = btmDisplay.textContent;
-  console.log(dsp);
-  if (dsp.length > 23) return; 
-  if (isNaN(dsp[dsp.length-1]) && isNaN(input)) return;
-  if (dsp === '0' && !isNaN(input)) {
-    btmDisplay.textContent = '';
   }
-
-  btmDisplay.textContent += input
+  if (btmDisplay.textContent === '0') btmDisplay.textContent = '';
+  btmDisplay.textContent += input;
 }
 
 
-clearBtn.addEventListener('click', () => {
+// 1: If a number is typed, it goes on bottom display. If number is 0, it overwrites.
+// 2: When an operator is used, top display becomes bottom + operator. Bottom display fades slightly
+// 3: When equal is used, top display shows calculator, bottom shows result (faded slightly)
+// 4: If result is shown on bottom, then typing a number overwrites and clears top display. 
+// 5: If result is shown on bottom, typing an operator does step 2.
+// 6: If clear button is used, top should be set to nothing, bottom to 0
+// 7: if backspace/← is used, bottom line should go back one space. If no characters remain, bottom should be set to 0.
+//
+//
+//
+//
+//
+
+
+
+
+
+
+
+function clearDisplays(){
   topDisplay.textContent = '';
   btmDisplay.textContent = 0;
-  currentOp = '';
+  btmDisplay.classList.remove('display-previous');
+}
+
+clearBtn.addEventListener('click', () => {
+  clearDisplays();
 })
 
 
@@ -162,7 +152,7 @@ opBtns.forEach(btn => {
 })
 
 document.addEventListener('keydown', event => {
-  console.log(event.key);
+  document.querySelector('h1').focus();
   if (event.key === 'Backspace') {
     updateDisplays('←');
   } else if (event.key === 'Enter') {
@@ -171,6 +161,8 @@ document.addEventListener('keydown', event => {
     updateDisplays('×');
   } else if (event.key === '/') {
     updateDisplays('÷');
+  } else if (event.key === 'c' || event.key === 'C') {
+    clearDisplays();
   } else if ('1234567890.+_-=*^%/'.includes(event.key)) {
     updateDisplays(event.key);
   }
