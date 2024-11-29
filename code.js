@@ -58,8 +58,10 @@ function updateDisplays(input){
   if (input === '.') {
     if (bTextLen > 23 || bText.includes('.')) return;
     updateBottomDisplay('.');
+    return;
   } else {
     // Deal with Operators
+    if (bText[bTextLen-1] === '.') updateBottomDisplay('',bText.slice(0,-1));
     if (input === '=') {
       if (lastTDChar === '=') return;
         const [firstOperand,operator] = [tText.slice(0,-1),tText[tText.length-1]]; 
@@ -79,7 +81,7 @@ function updateDisplays(input){
         updateTopDisplay('', calculate(firstOperand,operator,bText) + input );
       }
     } else {
-      updateTopDisplay(input, bText);
+      updateTopDisplay(input, btmDisplay.textContent);
     }
   }
   lastInput = input;
