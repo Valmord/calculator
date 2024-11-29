@@ -33,19 +33,29 @@ function checkValidInput(input){
   return count <= 1;
 }
 
+let lastInput = '';
+
 function updateDisplays(input){
   const bText = btmDisplay.textContent;
   const bTextLen = bText.length;  
   const tText = topDisplay.textContent;
+  const lastTDChar = tText[tText.length-1];
 
-  if (bTextLen > 23 && !isNaN(input) && !btmDisplay.classList.contains('display-previous')) return;
+
+  // bTextLen < 22
   if (!isNaN(input)) {
-    if (tText[tText.length-1] === '=') {
+    
+    // if (isNaN(lastTDChar) )
+    if (lastTDChar === '=') {
       clearDisplays();
-    } 
+    } else if (isNaN(lastInput)) updateBottomDisplay('','0');
+    lastInput = input;
+    if (bTextLen > 23) return;
     updateBottomDisplay(input);
     return; 
   }
+
+  lastInput = input;
 
   if (input === '←') {
     if (btmDisplay.classList.contains('display-previous') || bTextLen <= 1) updateBottomDisplay('','0');
