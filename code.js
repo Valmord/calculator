@@ -67,12 +67,13 @@ function updateDisplays(input){
         updateBottomDisplay('',calculate(firstOperand,operator,bText));
     } else if (input === '←') {
       updateBottomDisplay('',bTextLen <= 1 ? '0' : bText.slice(0,-1));
-      clearTopDisplay();
+      if (lastTDChar === '=') clearTopDisplay();
       top
       return;
     } else if (lastTDChar && isNaN(lastTDChar))  {
       if (lastTDChar === '=') {
-        updateTopDisplay('', calculate(...splitEquation(tText.slice(0,-1)))+input);
+        const calculation = calculate(...splitEquation(tText.slice(0,-1)));
+        updateTopDisplay('', calculation+input);
       } else {
         const [firstOperand,operator] = [tText.slice(0,-1),tText[tText.length-1]]; 
         updateTopDisplay('', calculate(firstOperand,operator,bText) + input );
@@ -84,48 +85,6 @@ function updateDisplays(input){
   lastInput = input;
   btmDisplay.classList.add('fade');
   return;
-
-
-
-
-  if (input === '←') {
-    if (btmDisplay.classList.contains('display-previous') || bTextLen <= 1) updateBottomDisplay('','0');
-    else updateBottomDisplay('',bText.slice(0,-1));
-    btmDisplay.classList.remove('display-previous');
-    btmDisplay.classList.remove('display-result');
-    return;
-  }
-
-  if (input !== '.' && isNaN(input)){
-    if (tText[tText.length-1] === '=') {
-      updateTopDisplay(input, bText);
-      btmDisplay.classList.add('display-previous');
-    }
-  }
-
-
-
-  if (input !== '.' && isNaN(input)){
-    if (!tText) {
-      updateTopDisplay(input, bText);
-      btmDisplay.classList.add('display-previous');
-    } else if (input === '=') {
-      btmDisplay.classList.add('display-result');
-    }
-    else {
-      const [firstOperand,operator] = [tText.slice(0,-1),tText[tText.length-1]];
-      updateTopDisplay('',calculate(firstOperand,bText,operator) + input);
-      // updateBottomDisplay('',calculate(firstOperand,bText,operator));
-    }
-    return;
-  }
-
-  if (btmDisplay.classList.contains('display-result')) {
-    clearDisplays();
-    btmDisplay.classList.remove('display-result');
-  }
-
-  updateBottomDisplay(input); 
 }
 
 function updateTopDisplay(input, newText = ''){
