@@ -208,6 +208,6 @@ function calculate(a,op,b){
   }
 
   const result = operations[op](+a,+b);
-  if (Math.ceil(result) === result) return result;
+  if (Math.ceil(result) === result) return String(result);
   return result.toFixed(NUM_OF_DP);
 }
