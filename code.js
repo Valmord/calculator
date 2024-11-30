@@ -6,14 +6,6 @@ const opBtns = document.querySelectorAll('.op');
 
 const NUM_OF_DP = 2;
 
-
-numBtns.forEach( btn => {
-  btn.addEventListener('click', () => {
-    updateDisplays(btn.textContent);
-  })
-})
-
-
 function splitEquation(text){
   for (let i = 1; i < text.length; i++){
     if (isNaN(text[i]) && text[i] !== '.') {
@@ -21,16 +13,6 @@ function splitEquation(text){
     }
   }
   return ['','','']
-}
-
-function checkValidInput(input){
-  const bText = btmDisplay.textContent + input;
-  let count = 0;
-  for (let i = 0; i < bText.length; i++){
-    if (bText[i] === '.') count++;
-    if (isNaN(bText[i]) && bText[i]!=='.') count = 0;
-  }
-  return count <= 1;
 }
 
 let lastInput = '';
@@ -42,10 +24,6 @@ function updateDisplays(input){
   const lastTDChar = tText[tText.length-1];
 
   btmDisplay.classList.remove('fade');
-
-  
-
-
   if (!isNaN(input)) {
     if (lastTDChar === '=') {
       clearDisplays();
@@ -103,26 +81,6 @@ function updateBottomDisplay(input, newText=''){
   btmDisplay.textContent += input;
 }
 
-
-// 1: If a number is typed, it goes on bottom display. If number is 0, it overwrites.
-// 2: When an operator is used, top display becomes bottom + operator. Bottom display fades slightly
-// 3: When equal is used, top display shows calculator, bottom shows result (faded slightly)
-// 4: If result is shown on bottom, then typing a number overwrites and clears top display. 
-// 5: If result is shown on bottom, typing an operator does step 2.
-// 6: If clear button is used, top should be set to nothing, bottom to 0
-// 7: if backspace/← is used, bottom line should go back one space. If no characters remain, bottom should be set to 0.
-//
-//
-//
-//
-//
-
-
-
-
-
-
-
 function clearDisplays(){
   topDisplay.textContent = '';
   btmDisplay.textContent = 0;
@@ -132,10 +90,16 @@ function clearTopDisplay(){
   topDisplay.textContent = '';
 }
 
+
+numBtns.forEach( btn => {
+  btn.addEventListener('click', () => {
+    updateDisplays(btn.textContent);
+  })
+})
+
 clearBtn.addEventListener('click', () => {
   clearDisplays();
 })
-
 
 opBtns.forEach(btn => {
   if (btn.textContent.includes('mod')){
