@@ -10,6 +10,13 @@ body {
   flex-direction: column;
   align-items: center;
   background-color: #5a311d;
+  background-image: url('./images/background.jpg');
+}
+
+h1 {
+  margin: 200px 0 -180px;
+  color: white;
+  font-size: 22px;
 }
 
 .calculator {
@@ -48,7 +55,7 @@ h2 {
 }
 
 .display-top {
-  font-size: 14px;
+  font-size: 11.5px;
   padding: 0 10px;
   height: 20px;
   opacity: 0.85;
